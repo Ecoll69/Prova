@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogo Prodotti</title>
+    <style>
+        /* Ho spostato i CSS da inline per pulizia */
+        body { font-family: sans-serif; padding: 40px; background-color: #f4f4f9; }
+        h1 { text-align: center; color: #333; }
+        button { padding: 10px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        ul { list-style-type: none; padding: 0; margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        li { background-color: #fff; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .loading { text-align: center; font-style: italic; color: gray; }
+    </style>
+</head>
+<body>
+    <h1>Catalogo Prodotti / Film</h1>
+    
+    <!-- Tasto per aggiornare la vista se necessario -->
+    <button onclick="caricaDati()">Aggiorna Lista</button>
+    
+    <div id="statusBox" style="text-align: center; margin-bottom: 20px;"></div>
+
+    <!-- Contenitore dove verranno inseriti gli elementi del catalogo -->
+    <ul id="lista"></ul>
+
+    <script>
+        // Configurazione API (assicurati che l'endpoint sia corretto in base al tuo backend)
+        const API_URL = "https://effective-space-barnacle-qv775v5wqgpgfpr6-8000.app.github.dev"; 
+        // Cambia "/prodotti" con il punto che esponde la tua risorsa (es. /film se usi Citation 1)
+        
+        async function caricaDati() {
+            const statusBox = document.getElementById("statusBox");
+            const listaHtml = document.getElementById("lista");
+            
+            listaHtml.innerHTML = "<li class='loading'>Caricamento catalogo...</li>";
+
+            try {
+                let risposta = await fetch(`${API_URL}/prodotti`); // Endpoint da configurare
+                
+                if(risposta.ok) {
+                    let prodotti = await risposta.json();
+                    
+                    statusBox.textContent = "";
+                    listaHtml.innerHTML = "";
+
+                    // Renderizza i dati in una lista HTML come nello stile Citation 2
+                    prodotti.forEach(p => {
+                        let elemento = document.createElement("li");
+                        
+                        // Adatta le proprietà (p.nome, p.prezzo) a quelle del tuo backend (es. titolo, anno, trama da Citation 1)
+                        elemento.innerHTML = `<strong>${p.titolo}</strong> - Anno: ${p.anno} | Trama: ${p.trama.substring(0,50)}...`; 
+                        
+                        listaHtml.appendChild(elemento);
+                    });
+                } else {
+                    listaHtml.innerHTML = "<li>Errore nel caricamento del catalogo.</li>";
+                }
+            } catch (error) {
+                console.error(error);
+                listaHtml.innerHTML = "<li>Impossibile contattare il server.</li>";
+            }
+        }
+
+        // Carica i dati automaticamente all'apertura della pagina
+        window.onload = caricaDati;
+    </script>
+</body>
+</html>
