@@ -66,5 +66,30 @@
         // Carica i dati automaticamente all'apertura della pagina
         window.onload = caricaDati;
     </script>
+       async function apriScheda(idFilm) {
+            try {
+                // 1. Invio la richiesta alla rotta di dettaglio passando l'ID come Path Parameter
+                const risposta = await fetch(`${API_URL}/film/${idFilm}`);
+                // 2. Controllo se la comunicazione con il server è andata a buon fine
+                if (!risposta.ok) {
+                    alert("Impossibile recuperare i dettagli di questo film.");
+                    return;
+                }
+ 
+                const film = await risposta.json();
+ 
+                // 3. Inserisco i dati del singolo film recuperato nei rispettivi elementi HTML
+                document.getElementById("schedaTitolo").innerText = film.titolo;
+                document.getElementById("schedaAnno").innerText = film.anno;
+                document.getElementById("schedaTrama").innerText = film.trama;
+ 
+                // 4. Rendo visibile il blocco della scheda tecnica modificando lo stile CSS (rimuovo il display: none)
+                document.getElementById("schedaFilm").style.display = "block";
+ 
+            } catch (errore) {
+                console.error("Errore durante il recupero della scheda tecnica:", errore);
+                alert("Errore di connessione durante il recupero dei dettagli del film.");
+            }
+        }
 </body>
 </html>
