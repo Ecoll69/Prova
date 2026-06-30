@@ -5,7 +5,11 @@ from .progetto_db import dbinit
 from .progetto_prodotti import router as prodotti_router
 from .progetto_utente import router as utenti_router
 from .progetto_film import router as film_router
+<<<<<<< HEAD:progetto (1)/progetto/progetto_main.py
 from FastApi.middleware.cors import CORSMiddleware
+=======
+from fastapi.middleware.cors import CORSMiddleware
+>>>>>>> c70283a (progetto film):FOCCO/progetto/progetto_main.py
 
 # Inizializzazione database all'avvio
 dbinit()

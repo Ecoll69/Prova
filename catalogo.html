@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineManiaci - Catalogo Locale</title>
+  <style>
+    :root {
+      --primary: #4a6cf7;
+      --secondary: #3a5bfa;
+      --accent: #16a34a;
+      --success: rgba(22, 163, 74, 0.1);
+      --error: rgba(220, 53, 69, 0.1);
+      --background-light: #f8fafc;
+      --card-background: white;
+      --border-radius-sm: 8px;
+      --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --text-primary: #1e293a;
+      --text-secondary: #64748b;
+      --text-accent: #16a34a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--text-primary);
+      background-color: var(--background-light);
+      line-height: 1.6;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .search-container {
+      display: flex;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--border-radius-sm);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-container::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px 16px;
+      font-size: 1rem;
+      border: none;
+      outline: none;
+      background-color: transparent;
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    input:focus {
+      box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.3);
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 6px rgba(74, 108, 247, 0.2);
+      min-width: 100px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      box-shadow: 0 6px 8px rgba(74, 108, 247, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .results-header h2 {
+      color: var(--text-primary);
+      font-size: 1.7rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(250px, 1fr));
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .search-results {
+        grid-template-columns: repeat(2, minmax(250px, 1fr));
+      }
+      
+      .search-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-results {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    /* Result Card */
+    .film-card {
+      background: var(--card-background);
+      border-radius: var(--border-radius-sm);
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .film-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .film-image {
+      height: 200px;
+      width: 100%;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 3rem;
+    }
+
+    .film-image img {
+      height: 100%;
+      width: auto;
+      object-fit: cover;
+      border-radius: var(--border-radius-sm);
+    }
+
+    .film-content {
+      padding: 16px;
+      flex: 1;
+    }
+
+    .film-title {
+      font-size: 1.3rem;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .film-meta {
+      display: flex;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .film-year {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Scheda Tecnica */
+    #schedaFilm {
+      display: none;
+      background: linear-gradient(135deg, rgba(25, 46, 97, 0.08), rgba(25, 46, 97, 0.1));
+      border-radius: var(--border-radius-sm);
+      padding: 25px;
+      margin-top: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    #schedaFilm.show {
+      display: block;
+    }
+
+    .tech-card {
+      background: var(--card-background);
+      border-radius: var(--border-radius-sm);
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .tech-card h3 {
+      color: var(--text-primary);
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .tech-card p {
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    .tech-card strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Loading states */
+    .skeleton-loader {
+      background-color: #f0f4f8;
+      height: 200px;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 15px;
+    }
+
+    .skeleton-text {
+      width: 70%;
+      height: 20px;
+      background: linear-gradient(90deg, #cbd5e1, #94a3b8);
+      border-radius: 4px;
+      display: block;
+      margin-top: 5px;
+    }
+
+    /* Status indicators */
+    .status-indicator {
+      text-align: center;
+      padding: 12px;
+      border-radius: var(--border-radius-sm);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .status-success {
+      background-color: rgba(22, 163, 74, 0.1);
+      border-left: 3px solid var(--accent);
+      color: var(--text-accent);
+    }
+
+    .status-error {
+      background-color: rgba(220, 53, 69, 0.1);
+      border-left: 3px solid #dc322f;
+      color: #dc322f;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding-top: 15px;
+      margin-top: 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive adjustments */
+    .film-card {
+      transition: transform 0.2s ease-out;
+    }
+
+    .film-card:hover:not(.has-skeleton) {
+      transform: translateY(-5px);
+    }
+    
+    @media (prefers-reduced-motion) {
+      .film-card:hover:not(.has-skeleton) {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎬 CineManiaci - Catalogo Locale</h1>
+      <p>Cerca i titoli archiviati all'interno del database locale della piattaforma.</p>
+    </header>
+
+    <!-- Search section -->
+    <section class="search-section">
+      <div class="search-container">
+        <input type="text" id="campoCerca" placeholder="Scrivi una parte del titolo (es. Matrix)..." aria-label="Ricerca film">
+        <button onclick="avviaRicerca()">
+          <svg xmlns="http://www.w3.org/2 2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 16l-3-3h3v4a2 2 0 0 0 2 2v2h5m7-9.5l-4 4h8l-4-4z"></path>
+          </svg>
+          Cerca
+        </button>
+      </div>
+    </section>
+
+    <section class="results-section">
+      <div class="results-header">
+        <h2>Resulti della ricerca</h2>
+        <p id="search-count">0 risultati trovati</p>
+      </div>
+      
+      <div id="search-results-container" class="search-results">
+        <!-- Results will be dynamically inserted here -->
+      </div>
+
+      <!-- Loading states -->
+      <div id="loading-indicator" class="status-indicator status-success">
+        Caricamento in corso...
+      </div>
+    </section>
+
+    <section id="schedaFilm" class="tech-card">
+      <h3><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M5.7 21c-1.7 0-3.2-1.5-3.2-3.2s1.5-3.2 3.2-3.2 3.2 1.5 3.2 3.2-1.5 3.2-3.2 3.2z" /> </svg> Dettagli del film</h3>
+      
+      <div class="tech-content">
+        <p id="schedaTitolo">Nessun titolo selezionato</p>
+        <p id="schedaAnno">Nessun anno disponibile</p>
+        <p id="schedaTrama">Nessuna trama disponibile</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2023 CineManiaci - Catalogo Locale | App di ricerca film in tempo reale</p>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const resultsContainer = document.getElementById('search-results-container');
+      const searchCount = document.getElementById('search-count');
+      
+      // Initialize with loading state
+      showLoadingState();
+      
+      async function avviaRicerca() {
+        const searchTerm = document.getElementById('campoCerca').value.trim();
+        
+        if (searchTerm === '') {
+          alert('Per favore inserisci un termine di ricerca');
+          return;
+        }
+        
+        // Show skeleton loader
+        resultsContainer.innerHTML = `
+          <div class="skeleton-loader">
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+          </div>
+        `;
+        searchCount.textContent = 'Caricamento in corso...';
+        
+        try {
+          const response = await fetch(`${window.API_URL}/film?search=${encodeURIComponent(searchTerm)}`);
+          
+          if (!response.ok) {
+            throw new Error(`Errore di rete: ${response.status} (${response.statusText})`);
+          }
+          
+          const films = await response.json();
+          
+          // Update results count
+          searchCount.textContent = `${films.length} risultati trovati`;
+          
+          // Clear previous results
+          resultsContainer.innerHTML = '';
+          
+          // Render results
+          if (films.length > 0) {
+            films.forEach(film => {
+              const card = document.createElement('div');
+              card.className = 'film-card';
+              
+              // Create content
+              card.innerHTML = `
+                <div class="film-image">
+                  ${film.poster ? `<img src="${film.poster}" alt="${film.titolo}">` : `<div style="display:flex; align-items:center; justify-content:center; color:${var(--primary)}; font-size:3rem;">🎬</div>`}
+                </div>
+                <div class="film-content">
+                  <h3 class="film-title">${film.titolo}</h3>
+                  <div class="film-meta">
+                    <span class="film-year">Anno: ${film.anno}</span>
+                    <span>•</span>
+                    <span>${film.genere}</span>
+                  </div>
+                </div>
+              `;
+              
+              // Add click handler
+              card.addEventListener('click', () => {
+                document.getElementById('schedaTitolo').innerText = film.titolo;
+                document.getElementById('schedaAnno').innerText = film.anno;
+                document.getElementById('schedaTrama').innerText = film.trama.substring(0, 250) + '...';
+                
+                // Show the tech card
+                const techCard = document.getElementById('schedaFilm');
+                techCard.classList.add('show');
+              });
+              
+              resultsContainer.appendChild(card);
+            });
+          } else {
+            resultsContainer.innerHTML = `
+              <div class="film-card">
+                <div class="film-image">
+                  <div style="display:flex; align-items:center; justify-content:center; color:${var(--primary)}; font-size:3rem;">🎬</div>
+                </div>
+                <div class="film-content">
+                  <h3 class="film-title">Nessun risultato trovato</h3>
+                  <p>Prova a cercare un titolo più specifico o verifica la sintassi del termine di ricerca.</p>
+                </div>
+              </div>
+            `;
+          }
+          
+        } catch (error) {
+          // Handle errors
+          console.error('Errore durante il recupero dei film:', error);
+          
+          resultsContainer.innerHTML = `
+            <div class="skeleton-loader" style="display:none;">
+              <div class="skeleton-text"></div>
+              <div class="skeleton-text"></div>
+              <div class="skeleton-text"></div>
+            </div>
+          `;
+          
+          showStatusError(error.message);
+        }
+        
+        // Hide loading state
+        hideLoadingState();
+      }
+
+      function showLoadingState() {
+        resultsContainer.innerHTML = `
+          <div class="skeleton-loader">
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+          </div>
+        `;
+        searchCount.textContent = 'Caricamento in corso...';
+      }
+
+      function hideLoadingState() {
+        resultsContainer.innerHTML = '';
+        searchCount.textContent = '0 risultati trovati';
+      }
+      
+      function showStatusError(message) {
+        const statusIndicator = document.createElement('div');
+        statusIndicator.className = 'status-indicator status-error';
+        statusIndicator.textContent = message;
+        
+        // Append to container
+        resultsContainer.appendChild(statusIndicator);
+        
+        setTimeout(() => {
+          // Clear error after 3 seconds
+          statusIndicator.remove();
+        }, 3000);
+      }
+
+      // Initialize API URL (could be configured via environment variables or user settings)
+      window.API_URL = "https://effective-space-barnacle-qv775v5wqgpgfpr6-8000.app.github.dev";
+
+      // Initial search
+      avviaRicerca();
+      
+      // Add click handler to tech card close button (could be implemented with more sophisticated design)
+      document.getElementById('schedaFilm').addEventListener('click', () => {
+        document.getElementById('schedaFilm').classList.remove('show');
+      });
+    });
+  </script>
+</body>
+</html>
